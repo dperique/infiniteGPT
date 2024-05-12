@@ -301,7 +301,7 @@ def process_chunks(input_file, output_file, chunk_size, overlap, max_width, doFo
 # Specify your input and output files
 if __name__ == "__main__":
     if len(sys.argv) != 5:
-        print("Usage: python blastoff.py <input_file_prefix> <chunk_size> <formatMode> <stdOut>")
+        print(f"Usage: {sys.argv[0]} <input_file_prefix> <chunk_size> <formatMode> <stdOut>")
         print("\nParameters:")
         print("  <input_file_prefix>  Base name of the input file. The script uses this prefix to")
         print("                       find '<input_file_prefix>.txt' as the input file and")
