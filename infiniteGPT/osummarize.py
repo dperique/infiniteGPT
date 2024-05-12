@@ -238,11 +238,16 @@ def process_chunks(input_file, output_file, chunk_size, overlap, max_width, doFo
     text = load_text(input_file)
     chunks = split_into_chunks(text, chunk_size, overlap)
 
-    with open(output_file, 'w') as file:
+    if output_file == "to_stdout":
+        output_object = sys.stdout
+    else:
+        output_object = open(output_file, 'w')
+
+    with output_object as file:
         count = 1
         responses = []
         for chunk in chunks:
-            print(f"Summarizing chunk {count}")
+            print(f"Summarizing chunk {count}", file=sys.stderr)
             debug_print(f"Chunk:\n\n {chunk}\n\n")
             raw_response = call_ollama_api(chunk)
             debug_print(f"Raw response:\n\n {raw_response}\n\n")
@@ -295,16 +300,29 @@ def process_chunks(input_file, output_file, chunk_size, overlap, max_width, doFo
 
 # Specify your input and output files
 if __name__ == "__main__":
-    if len(sys.argv) != 4:
-        print("Usage: python blastoff.py <input_file_prefix> <chunk_size> <formatMode>\n")
-        print("  We will take the input_file_prefix and use input_file_prefix.txt as the input file")
-        print("  and input_file_prefix.md as the output file.\n")
-        print("  We will produce a summary in bullet format for each chunk of text in the input file.\n")
+    if len(sys.argv) != 5:
+        print("Usage: python blastoff.py <input_file_prefix> <chunk_size> <formatMode> <stdOut>")
+        print("\nParameters:")
+        print("  <input_file_prefix>  Base name of the input file. The script uses this prefix to")
+        print("                       find '<input_file_prefix>.txt' as the input file and")
+        print("                       generates '<input_file_prefix>.md' as the output file.")
+        print("  <chunk_size>         Number of lines to include in each chunk of the output.")
+        print("                       Must be an integer.")
+        print("  <formatMode>         Boolean flag ('True' or 'False'). If 'True', the output")
+        print("                       will be formatted. If 'False', no formatting will be applied.")
+        print("  <stdOut>             Boolean flag ('True' or 'False'). If 'True', the output will")
+        print("                       be printed to stdout instead of an output file.")
+
+        print("\nDescription:")
+        print("  This script processes chunks of text from a specified input file and outputs")
+        print("  them into a markdown file or stdout. Each chunk of text is processed according")
+        print("  to the specified 'chunk_size', and optional formatting can be applied.")
         sys.exit(1)
 
     input_file_prefix = sys.argv[1]
     chunk_size_arg = sys.argv[2]
     doFormat = sys.argv[3]
+    stdoutMode = sys.argv[4]
 
     try:
         chunk_size = int(chunk_size_arg)
@@ -329,6 +347,8 @@ if __name__ == "__main__":
     else:
         input_file = input_file_prefix + ".txt"
     output_file = input_file_prefix + ".md"
+    if stdoutMode == "True":
+        output_file = "to_stdout"
     print(f"Input file: {input_file}; output file: {output_file}")
     print(f"Chunk size: {chunk_size}, overlap: 50, max width: 100, format: {doFormat}")
     process_chunks(input_file, output_file, chunk_size=chunk_size, overlap=50, max_width=100, doFormat=doFormat)
