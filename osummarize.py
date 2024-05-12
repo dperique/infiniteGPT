@@ -52,6 +52,9 @@ def ollama_generate_response(model, max_tokens, messages):
 
     return response, total_tokens, prompt_tokens, completion_tokens
 
+# Clipboard file
+CLIPBOARD_FILE = "/tmp/clipboard.txt"
+
 # Regex to match whisper transcripts with timestamps.
 timestamp_pattern = r'\[(\d{2}:)?\d{2}:\d{2}\.\d{3} --> (\d{2}:)?\d{2}:\d{2}\.\d{3}\]'
 
@@ -346,6 +349,15 @@ if __name__ == "__main__":
         input_file = sys.argv[1]
     else:
         input_file = input_file_prefix + ".txt"
+    if input_file_prefix == "clipboard":
+        # Read what's in the clipboard and create a file called /tmp/cliipboard.txt
+        # with the clipboard contents.
+        import pyperclip
+        clipboard_text = pyperclip.paste()
+        print(f"Using clipboard mode; see {CLIPBOARD_FILE} for the clipboard contents")
+        with open(CLIPBOARD_FILE, "w") as file:
+            file.write(clipboard_text)
+        input_file = CLIPBOARD_FILE
     output_file = input_file_prefix + ".md"
     if stdoutMode == "True":
         output_file = "to_stdout"
