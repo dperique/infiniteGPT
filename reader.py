@@ -28,6 +28,9 @@ def url_to_text_simple(url, start_text=""):
 
 def url_to_text(url, start_text=""):
     # pip install llama-index llama-index-readers-web IPython
+    # I uninstalled all this because it was just huge.  Since
+    # this is no better than the simple mode, I'm not going to
+    # use it.
     from llama_index.readers.web import SimpleWebPageReader
     documents = SimpleWebPageReader(html_to_text=True).load_data(urls=[url])
     document_as_dict = documents[0].to_dict()
@@ -53,8 +56,8 @@ if __name__ == "__main__":
     start_text = sys.argv[2]
 
     # both methods yield identical output
-    print(url_to_text(url, start_text=start_text))
-    #print(url_to_text_simple(url, start_text=start_text))
+    #print(url_to_text(url, start_text=start_text))
+    print(url_to_text_simple(url, start_text=start_text))
     #for key in document_as_dict:
     #    print(key)
 
