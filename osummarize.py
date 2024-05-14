@@ -3,12 +3,12 @@ import sys
 import json
 import re
 import os
-import PyPDF2
 
 # Return a string of the text from the file.
 # Handle pdf files by first extracting the text from the pdf.
 def load_text(file_path):
     if file_path.endswith('.pdf'):
+        import PyPDF2
         with open(file_path, 'rb') as pdf_file:
             pdf_reader = PyPDF2.PdfReader(pdf_file)
             text = ""
@@ -248,9 +248,10 @@ def process_chunks(input_file, output_file, chunk_size, overlap, max_width, doFo
 
     with output_object as file:
         count = 1
+        total_chunks = len(chunks)
         responses = []
         for chunk in chunks:
-            print(f"Summarizing chunk {count}", file=sys.stderr)
+            print(f"Summarizing chunk {count} of {total_chunks}", file=sys.stderr)
             debug_print(f"Chunk:\n\n {chunk}\n\n")
             raw_response = call_ollama_api(chunk)
             debug_print(f"Raw response:\n\n {raw_response}\n\n")
@@ -343,7 +344,7 @@ if __name__ == "__main__":
 
     # extract the root of the filename
     extension = input_file_prefix.split('.')[-1]
-    input_file_prefix = input_file_prefix.split('.')[0]
+    input_file_prefix = input_file_prefix.replace('.' + extension, "")
     print(f"Extension: {extension}")
     if extension == "pdf":
         input_file = sys.argv[1]
