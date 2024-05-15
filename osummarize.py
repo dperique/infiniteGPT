@@ -310,6 +310,7 @@ if __name__ == "__main__":
         print("  <input_file_prefix>  Base name of the input file. The script uses this prefix to")
         print("                       find '<input_file_prefix>.txt' as the input file and")
         print("                       generates '<input_file_prefix>.md' as the output file.")
+        print("                       Use 'clipboard' to summarize the contents of the clipboard.")
         print("  <chunk_size>         Number of lines to include in each chunk of the output.")
         print("                       Must be an integer.")
         print("  <formatMode>         Boolean flag ('True' or 'False'). If 'True', the output")

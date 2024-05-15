@@ -46,7 +46,7 @@ if __name__ == "__main__":
         print("                Pass in "" if you don't want to specify a starting point.")
 
         print("\nDescription:")
-        print("  This script fetches text from the specified URL using the llama-index")
+        print("  This script fetches text from the specified URL using the requests")
         print("  web reader, and optionally starts output from a user-specified text.")
         print("  This is useful for extracting a specific section of a web page.")
         sys.exit(1)
