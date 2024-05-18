@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# streamlit run --server.port 8509 --server.headless True --theme.base dark sl_osummary.py
+
 import streamlit as st
 import pyperclip
 import PyPDF2
@@ -107,18 +109,26 @@ def process_chunks(text, chunk_size, overlap):
         if match:
             tmp_response.append(match.group())
 
+        errors_found = 0
         for line in raw_response.split('\n'):
             if '"key":' in line:
+
                 line = fixup_line(line)
+
                 try:
                     data = json.loads(line)
-                    bullet_point = '* ' + data['key']
-                    tmp_response.append(bullet_point)
                 except json.JSONDecodeError:
                     # If we can't parse the line as JSON, just append it as is
-                    # to avoid losing data.
-                    tmp_response.append(line.split('"key":')[1].strip() + '\n')
+                    # to avoid losing data; we'll strip the key part to make it
+                    # look like an almost legitimate bullet point.
+                    bullet_point = '* ' + line.split('"key":')[1].strip() + "Error: text repaired"
+                    tmp_response.append(bullet_point)
+                    errors_found += 1
+                    continue
+                bullet_point = '* ' + data['key']
+                tmp_response.append(bullet_point)
 
+        print(f"Errors found: {errors_found}")
         responses.append('\n'.join(tmp_response))
         responses.append("\n***")
 

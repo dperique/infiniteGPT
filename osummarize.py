@@ -279,17 +279,18 @@ def process_chunks(input_file, output_file, chunk_size, overlap, max_width, doFo
                     try:
                         data = json.loads(line)
                     except json.JSONDecodeError as e:
-                        # If something went wrong with the json parse, let's put the line in the file so
-                        # we don't miss any part of the summarization and let the user know what happened.
-                        file.write(f"Error decoding JSON: {str(e)}\n")
-                        file.write(f"Original Line:\n{original_line}\n")
-                        file.write(f"Line:\n{line}\n")
-                        errors_found = errors_found + 1
+                        # If we can't parse the line as JSON, just append it as is
+                        # to avoid losing data; we'll strip the key part to make it
+                        # look like an almost legitimate bullet point.
+                        bullet_point = '* ' + line.split('"key":')[1].strip() + "Error: text repaired"
+                        tmp_response.append(bullet_point)
+                        errors_found += 1
+
+                        # Update the output file so the user to see the summarization as it occurs.
+                        write_formatted_bullet(file, bullet_point, max_width, doFormat)
                         continue
-                    #print(f"good case original_line: {original_line}")
                     bullet_point = '* ' + data['key']
                     tmp_response.append(bullet_point)
-
                     # Update the output file so the user to see the summarization as it occurs.
                     write_formatted_bullet(file, bullet_point, max_width, doFormat)
 
